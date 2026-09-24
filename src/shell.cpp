@@ -1,65 +1,42 @@
+#include <csignal>
 #include "../include/shell.hpp"
+#include "../include/executer.hpp"
+#include "../include/parser.hpp"
 
 #include <iostream>
 #include <string>
-#include <vector>
-#include <sstream>
-#include <ranges>
 
-#include <unistd.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
-void Shell::run()
-{
-    while (running)
-    {
-        std::string user_input;
+#define prompt "msh$ "
 
-        std::cout << prompt;
-        std::getline(std::cin, user_input);
+bool running = true;
 
-        std::stringstream ss(user_input);
+bool is_ctrl_c(int signal) { return signal == SIGINT; }
 
-        std::vector<std::string> args;
+void handle_signal(int signal) {
+  if (signal == SIGINT) {
+    running = false;
+  }
+}
 
-        std::string word;
+void Shell::run() {
 
-        while (ss >> word)
-        {
-            args.push_back(word);
-        }
+  Parser parser;
+  Executor executer;
 
-        if (args.empty())
-            continue;
+  while (running) {
+    std::string user_input;
 
-        pid_t pid = fork();
-
-        if (pid < 0)
-        {
-            std::cerr << "Fork failed\n";
-            return 1;
-        }
-        else if (pid == 0)
-        {
-            std::vector<char *> argv;
-
-            for (std::string &arg : args)
-            {
-                argv.push_back(arg.data());
-            }
-
-            argv.push_back(nullptr);
-
-            execvp(argv[0], argv.data());
-
-            perror("execvp");
-            return 1;
-        }
-        else
-        {
-            waitpid(pid, nullptr, 0);
-
-            std::cout << "Child finished\n";
-        }
+    std::cout << prompt;
+    if (!std::getline(std::cin, user_input)) {
+      break;
     }
+
+    const auto args = parser.parse(user_input);
+    if (!args.empty()) {
+      executer.execute(args);
+    }
+  }
 }

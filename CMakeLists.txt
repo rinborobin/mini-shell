@@ -11,6 +11,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_executable(mshell
     src/main.cpp
+    src/executer.cpp
+    src/parser.cpp
+    src/shell.cpp
 )
 
 target_compile_options(mshell PRIVATE
