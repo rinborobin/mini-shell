@@ -1,10 +1,8 @@
 #pragma once
 
-#include <string>
-#include <vector>
+#include "parser.hpp"
 
-class Executor
-{
+class Executor {
 public:
-    void execute(const std::vector<std::string>& args);
+  void execute(const Command &command);
 };

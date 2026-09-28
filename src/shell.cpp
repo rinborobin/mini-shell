@@ -1,7 +1,7 @@
-#include <csignal>
 #include "../include/shell.hpp"
 #include "../include/executer.hpp"
 #include "../include/parser.hpp"
+#include <csignal>
 
 #include <iostream>
 #include <string>
@@ -24,7 +24,7 @@ void handle_signal(int signal) {
 void Shell::run() {
 
   Parser parser;
-  Executor executer;
+  Executor executor;
 
   while (running) {
     std::string user_input;
@@ -33,10 +33,10 @@ void Shell::run() {
     if (!std::getline(std::cin, user_input)) {
       break;
     }
+    Command command = parser.parse(user_input);
 
-    const auto args = parser.parse(user_input);
-    if (!args.empty()) {
-      executer.execute(args);
+    if (!command.args.empty()) {
+      executor.execute(command);
     }
   }
 }

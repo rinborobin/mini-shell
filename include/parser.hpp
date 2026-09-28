@@ -1,10 +1,14 @@
 #pragma once
 
-#include <vector>
 #include <string>
+#include <vector>
 
-class Parser
-{
+struct Command {
+  std::vector<std::string> args;
+  std::string outputFile;
+};
+
+class Parser {
 public:
-    std::vector<std::string> parse(const std::string &input);
+  Command parse(const std::string &input);
 };

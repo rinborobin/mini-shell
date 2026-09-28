@@ -1,15 +1,19 @@
 #include "../include/parser.hpp"
 #include <sstream>
 
-std::vector<std::string> Parser::parse(const std::string &input) {
+Command Parser::parse(const std::string &input) {
   std::stringstream ss(input);
 
-  std::vector<std::string> args;
+  Command command;
 
   std::string word;
 
   while (ss >> word) {
-    args.push_back(word);
+    if (word == ">") {
+      ss >> command.outputFile;
+    } else {
+      command.args.push_back(word);
+    }
   }
-  return args;
+  return command;
 }
